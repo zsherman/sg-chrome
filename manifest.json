@@ -4,9 +4,20 @@
   "name": "SeatGeek",
   "description": "SeatGeek integration for online music players.",
   "version": "0.1",
-
   "permissions": [
     "http://api.seatgeek.com/2"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://hypem.com/*"
+      ],
+      "js": [
+        "src/scripts/jquery-2.1.1.min.js",
+        "src/scripts/background.js"
+      ],
+      "run_at" : "document_idle"
+    }
   ],
   "browser_action": {
     "default_icon": "src/images/icon.png",
