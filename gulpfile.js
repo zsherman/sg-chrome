@@ -29,7 +29,7 @@ gulp.task('styles', function() {
     .pipe(gulp.dest('dist/styles'))
     .pipe(rename({ suffix: '.min' }))
     .pipe(minifycss())
-    .pipe(livereload(server))
+    // .pipe(livereload(server))
     .pipe(gulp.dest('dist/styles'))
     .pipe(notify({ message: 'Styles task complete' }));
 });
@@ -43,7 +43,7 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('dist/scripts'))
     .pipe(rename({ suffix: '.min' }))
     .pipe(uglify())
-    .pipe(livereload(server))
+    // .pipe(livereload(server))
     .pipe(gulp.dest('dist/scripts'))
     .pipe(notify({ message: 'Scripts task complete' }));
 });
@@ -59,7 +59,7 @@ gulp.task('react', function() {
 gulp.task('images', function() {
   return gulp.src('src/images/**/*')
     .pipe(cache(imagemin({ optimizationLevel: 3, progressive: true, interlaced: true })))
-    .pipe(livereload(server))
+    // .pipe(livereload(server))
     .pipe(gulp.dest('dist/images'))
     .pipe(notify({ message: 'Images task complete' }));
 });
@@ -84,10 +84,10 @@ gulp.task('connect', function() {
 gulp.task('watch', function() {
  
   // Listen on port 35729
-  server.listen(35729, function (err) {
-    if (err) {
-      return console.log(err)
-    };
+  // server.listen(35729, function (err) {
+  //   if (err) {
+  //     return console.log(err)
+  //   };
  
     // Watch .scss files
     gulp.watch('src/styles/**/*.scss', function(event) {
@@ -107,6 +107,6 @@ gulp.task('watch', function() {
       gulp.run('images');
     });
  
-  });
+  // });
  
 });
