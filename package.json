@@ -1,0 +1,40 @@
+{
+  "name": "SGchrome",
+  "version": "0.0.1",
+  "description": "Seatgeek chrome extension.",
+  "main": "index.html",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zsherman/sg-chrome.git"
+  },
+  "keywords": [
+    "seatgeek",
+    "chrome"
+  ],
+  "author": "Zach Sherman & Ed Kelley",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zsherman/sg-chrome/issues"
+  },
+  "homepage": "https://github.com/zsherman/sg-chrome",
+  "devDependencies": {
+    "gulp": "^3.8.2",
+    "gulp-autoprefixer": "0.0.7",
+    "gulp-cache": "^0.2.0",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.2.0",
+    "gulp-imagemin": "^0.6.1",
+    "gulp-jshint": "^1.6.3",
+    "gulp-livereload": "^2.1.0",
+    "gulp-minify-css": "^0.3.5",
+    "gulp-notify": "^1.4.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-ruby-sass": "^0.5.0",
+    "gulp-uglify": "^0.3.1",
+    "gulp-util": "^2.2.18",
+    "tiny-lr": "0.0.7"
+  }
+}
