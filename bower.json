@@ -1,0 +1,23 @@
+{
+  "name": "sg-chrome",
+  "version": "0.0.1",
+  "homepage": "https://github.com/zsherman/sg-chrome",
+  "authors": [
+    "Zach Sherman & Ed Kelley"
+  ],
+  "description": "SG Chrome Extension",
+  "main": "index.html",
+  "keywords": [
+    "seatgeek",
+    "chrome"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
