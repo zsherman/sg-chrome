@@ -1,37 +1,114 @@
-var HypemParser = function() {
-    this.current_artist;
-};
-HypemParser.prototype.getArtists = function() {
-    var artists = [];
-    $(".track_name .artist").each(function(i, artist) {
-        artists.push(artist.text);
-    });
-    return artists;
-};
-HypemParser.prototype.getCurrentArtist = function() {
-    var artist_div = $("#player-nowplaying a")[0];
-    if (!artist_div) return null;
+var BaseParser = function() {
+    var that = {};
+    that.current_artist = null;
+    that.artist_div =  null;
+    that.track_div =  null;
+    that.listing_div =  null;
 
-    return artist_div.text;
-};
-HypemParser.prototype.initListener = function() {
-    var that = this;
-    this.updateArtist();
-    $('#player-nowplaying').bind("DOMSubtreeModified",function(){
-        that.updateArtist();
-    });
-};
-HypemParser.prototype.updateArtist = function() {
-    var artist = this.getCurrentArtist();
-    if (artist && artist != this.current_artist) {
-        this.current_artist = artist;
-        this.artistUpdated();
+    that.getArtists = function() {
+        var artists = [];
+        that.listing_div.each(function(i, artist) {
+            artists.push(artist.text);
+        });
+        return artists;
+    };
+
+    that.getCurrentArtist = function() {
+        return null;
     }
-};
-HypemParser.prototype.artistUpdated = function() {
-    console.log("Now playing", this.current_artist);
+
+    that.initListener = function(callback) {
+        that.updateArtist(callback);
+        console.log(that.track_div);
+        that.track_div.bind("DOMSubtreeModified",function(){
+            that.updateArtist(callback);
+        });
+    };
+
+    that.updateArtist = function(callback) {
+        var artist = that.getCurrentArtist();
+        console.log
+        if (artist && artist != that.current_artist) {
+            that.current_artist = artist;
+            callback(that.current_artist);
+        }
+    };
+
+    return that;
 };
 
-var parser = new HypemParser();
-console.log(parser.getArtists());
-parser.initListener();
+var HypemParser = function() {
+    var that = BaseParser();
+    that.track_div = $('#player-nowplaying');
+    that.listing_div = $(".track_name .artist");
+
+    that.getCurrentArtist = function() {
+        var artist_div = $("#player-nowplaying a")[0];
+        if (!artist_div) return null;
+
+        return artist_div.text;
+    };
+    return that;
+};
+
+var API = function() {
+    var that = {};
+    that.api_url = "http://api.seatgeek.com/2";
+
+    that.getArtistResults = function(artist, callback) {
+        var url = that.api_url + "/performers?" + $.param({q : artist});
+        $.getJSON(url, function(data) {
+            if (data.performers.length != 0) {
+                callback(data.performers[0]);
+            }
+            else {
+                callback(null);
+            }
+        });
+    };
+
+    that.getEventResults = function(artist_id, callback) {
+        var url = that.api_url + "/events?" + $.param({"performers.id" : artist_id});
+        $.getJSON(url, function(data) {
+            callback(data);
+        });
+    };
+
+    return that;
+};
+
+var App = function() {
+    var that = {};
+    that.parser = new HypemParser();
+    that.api = new API();
+    that.artist_data;
+    that.event_data;
+
+    that.init = function() {
+        that.parser.initListener(that.artistUpdated.bind(that));
+    };
+
+    that.artistUpdated = function(artist) {
+        that.api.getArtistResults(artist, that.artistRetrieved.bind(that));
+    };
+
+    that.artistRetrieved = function(artist_data) {
+        if (artist_data) {
+            that.artist_data = artist_data;
+            that.api.getEventResults(artist_data.id, that.eventRetrieved);
+        }
+    };
+
+    that.eventRetrieved = function(event_data) {
+        if (event_data) {
+            that.event_data = event_data;
+            console.log(event_data);
+        };
+    };
+
+    return that;
+};
+
+var app = new App();
+app.init();
+
