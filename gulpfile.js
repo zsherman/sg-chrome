@@ -12,6 +12,12 @@ var gulp = require('gulp'),
     notify = require('gulp-notify'),
     cache = require('gulp-cache'),
     livereload = require('gulp-livereload'),
+    bower = require('gulp-bower'),
+    include = require('gulp-include'),
+    gulpFilter = require('gulp-filter'),
+    gulpBrowserify = require('gulp-browserify'),
+    react = require('gulp-react'),
+    connect = require('gulp-connect'),
     lr = require('tiny-lr'),
     server = lr();
  
@@ -41,6 +47,13 @@ gulp.task('scripts', function() {
     .pipe(gulp.dest('dist/scripts'))
     .pipe(notify({ message: 'Scripts task complete' }));
 });
+
+// React
+gulp.task('react', function() {
+  return gulp.src('/src/scripts/jsx/*.jsx')
+    .pipe(gp.react().on('error', error))
+    .pipe(gulp.dest('/src/scripts/'));
+});
  
 // Images
 gulp.task('images', function() {
@@ -60,6 +73,11 @@ gulp.task('clean', function() {
 // Default task
 gulp.task('default', ['clean'], function() {
     gulp.run('styles', 'scripts', 'images');
+});
+
+// Simple server
+gulp.task('connect', function() {
+  connect.server();
 });
  
 // Watch
