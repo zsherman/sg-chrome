@@ -15,7 +15,7 @@ function loadTemplate(data, callback) {
 }
 
 function updateTemplate(data) {
-  data.visible = !!data.events && !!data.artist;
+  data.visible = !!data.all_events && !!data.artist;
   var template = Handlebars.compile(template_source);
   var html = template(data);
   if ($(".sg-extension")[0]) {
@@ -42,7 +42,7 @@ $.subscribe('retrieved', function(ev, data) {
 $( document ).on( 'mousewheel DOMMouseScroll', '.sg-extension', function ( e ) {
     var e0 = e.originalEvent,
         delta = e0.wheelDelta || -e0.detail;
-    
+
     this.scrollTop += ( delta < 0 ? 1 : -1 ) * 8;
     e.preventDefault();
 });
