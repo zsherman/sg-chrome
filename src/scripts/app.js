@@ -33,3 +33,24 @@ $.subscribe('retrieved', function(ev, data) {
     updateTemplate(data);
   }
 });
+
+
+$(function() {
+  // Do all the sticky scrolling
+  $( '.scrollable' ).bind( 'mousewheel DOMMouseScroll', function ( e ) {
+      var e0 = e.originalEvent,
+          delta = e0.wheelDelta || -e0.detail;
+      
+      this.scrollTop += ( delta < 0 ? 1 : -1 ) * 5;
+      e.preventDefault();
+  });
+
+  // $('.sg-extension').scroll(function(e){ 
+  //   $nav = $('.sg-extension nav').offset().top;
+  //   $el = $('.sg-extension').offset().top; 
+  //   if (($nav - $el) < 1){ 
+  //     console.log("it happened");
+  //     $('.sg-extension nav').css({'position': 'absolute', 'top': $nav-$el}); 
+  //   };
+  // });
+});
