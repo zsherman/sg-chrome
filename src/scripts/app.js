@@ -1,25 +1,20 @@
 $(function() {
     console.log( "ready!" );
 
-    $extension = $([
-      "<div class='sg-extension'>",
-      "  <header>",
-      "     <div class='logo'></div>",
-      "     <span>Childish Gambino</span>",
-      "     <div class='settings'><i class='fa fa-gear'></i></div>",
-      "  </header>",
-      "  <div class='performer'>",
-      "     <div class='count'>15 Shows Found for Childish Gambino'</div>",
-      "  </div>",
-      "  <ul class='events'>",
-      "   <li class='group'><span>July 7th, Hammerstein Ballroom</span><a>Tickets</a></li>",
-      "   <li class='group'><span>July 7th, Hammerstein Ballroom</span><a>Tickets</a></li>",
-      "   <li class='group'><span>July 7th, Hammerstein Ballroom</span><a>Tickets</a></li>",
-      "   <li class='group'><span>July 7th, Hammerstein Ballroom</span><a>Tickets</a></li>",
-      "   <li class='group'><span>July 7th, Hammerstein Ballroom</span><a>Tickets</a></li>",
-      "  </ul'>",
-      "</div>"
-    ].join(""));
+    $.subscribe('retrieved', function(ev, data) {
+      console.log(ev);
+      console.log(data);
+      var req = new XMLHttpRequest();
+      req.open("GET", chrome.extension.getURL('template.html'), true);
+      req.onreadystatechange = function() {
+          if (req.readyState == 4 && req.status == 200) {
+              var source = req.responseText;
+              var template = Handlebars.compile(source);
+              var html = template(data);
+              $('html').append(html);
+          }
+      };
+      req.send(null);
+    });
 
-    $('body').append($extension);
 });
