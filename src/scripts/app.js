@@ -1,4 +1,5 @@
 var template_source;
+var event_data;
 
 function loadTemplate(data, callback) {
   var req = new XMLHttpRequest();
@@ -41,8 +42,12 @@ $.subscribe('retrieved', function(ev, data) {
 
 // Handle chrome extension button being clicked
 $.subscribe('omnibox', function(ev, data) {
-  // If the extension is open close it
-  // Otherwise open it and load the template
+  if($('.sg-extension').is(":visible")) {
+    $(".sg-extension").slideUp('fast', function(){ $(this).hide(); } );
+  }
+  else {
+    $(".sg-extension").slideDown('fast', function(){ $(this).show(); } );
+  }
 });
 
 // Handle tabbing
@@ -57,7 +62,7 @@ $(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
 });
 
 $(document).on('click', '.sg-extension header a.close', function(e) {
-  $(".sg-extension").slideUp('fast', function(){ $(this).remove(); } );
+  $(".sg-extension").slideUp('fast', function(){ $(this).hide(); } );
 });
 
 // Prevent background page from scrolling

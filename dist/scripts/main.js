@@ -1,4 +1,5 @@
 var template_source;
+var event_data;
 
 function loadTemplate(data, callback) {
   var req = new XMLHttpRequest();
@@ -15,7 +16,7 @@ function loadTemplate(data, callback) {
 }
 
 function updateTemplate(data) {
-  data.visible = !!data.events && !!data.artist;
+  data.visible = !!data.all_events && !!data.artist;
   var template = Handlebars.compile(template_source);
   var html = template(data);
   if ($(".sg-extension")[0]) {
@@ -38,10 +39,15 @@ $.subscribe('retrieved', function(ev, data) {
   }
 });
 
+
 // Handle chrome extension button being clicked
 $.subscribe('omnibox', function(ev, data) {
-  // If the extension is open close it
-  // Otherwise open it and load the template
+  if($('.sg-extension').is(":visible")) {
+    $(".sg-extension").slideUp('fast', function(){ $(this).hide(); } );
+  }
+  else {
+    $(".sg-extension").slideDown('fast', function(){ $(this).show(); } );
+  }
 });
 
 // Handle tabbing
@@ -49,13 +55,14 @@ $(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
   e.preventDefault();
   var ref = $(this).attr('href');
   $('.sg-extension .tab-content').hide();
+  $('' + ref + '').css('display', 'block');
   $('' + ref + '').show();
   $('.sg-extension ul#menu .selected').removeClass('selected');
   $(this).closest('li').addClass('selected');
 });
 
 $(document).on('click', '.sg-extension header a.close', function(e) {
-  $(".sg-extension").slideDown('slow', function(){ $(this).remove(); } );
+  $(".sg-extension").slideUp('fast', function(){ $(this).hide(); } );
 });
 
 // Prevent background page from scrolling
@@ -86,9 +93,6 @@ $(document).on('DOMMouseScroll mousewheel', '.scrollable', function(ev) {
         return prevent();
     }
 });
-
-
-
 
 var o = $({});
 
@@ -164,7 +168,6 @@ var BaseParser = function() {
     that.updateArtist = function(callback) {
         var artist = that.getCurrentArtist();
         if (artist && artist != that.current_artist) {
-            console.log(artist);
             that.current_artist = artist;
             callback(that.current_artist);
         }
@@ -358,6 +361,9 @@ var App = function(hostname) {
         if (artist_data) {
             that.artistRetrieved(artist_data);
         }
+        else {
+            chrome.runtime.sendMessage({active : false});
+        }
     };
 
     that.artistRetrieved = function(artist_data) {
@@ -394,6 +400,8 @@ var App = function(hostname) {
     that.tryPublish = function() {
         if (!(that.artist_data && that.event_data && that.related_data && that.geo_event_data)) return;
         var message = {all_events: that.event_data, local_events: that.geo_event_data, artist: that.artist_data, related: that.related_data};
+        console.log(that.event_data);
+        chrome.runtime.sendMessage({active : that.event_data.events});
         $.publish('retrieved', message);
     };
 
@@ -404,8 +412,30 @@ var sg_app = new App(location.hostname);
 sg_app.init();
 
 
-console.log("IN EVENT");
+var activated = new Array();
+
+function checkForValidUrl(tabId, changeInfo, tab) {
+    chrome.pageAction.show(tabId);
+    activated[tabID] = false;
+};
+
 chrome.browserAction.onClicked.addListener(function(tab) {
-    console.log(tab);
+    if(!activated[tab.id]){
+        chrome.browserAction.setIcon({tabId: tab.id, path: 'src/images/sg-active.png'});
+        activated[tab.id] = true;
+    }else{
+        chrome.browserAction.setIcon({tabId: tab.id, path: 'src/images/sg-inactive.png'});
+        activated[tab.id] = false;
+    }
     chrome.tabs.sendMessage(tab.id, "clicked");
+});
+
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    if (request.active) {
+        chrome.browserAction.setIcon({tabId: sender.tab.id, path: 'src/images/sg-active.png'});
+    }
+    else {
+        chrome.browserAction.setIcon({tabId: sender.tab.id, path: 'src/images/sg-inactive.png'});
+    }
 });
