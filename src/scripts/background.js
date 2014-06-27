@@ -43,6 +43,7 @@ var BaseParser = function() {
         var artist_div;
         if (that.player_iframe) {
             artist_div = $(that.player_iframe).contents().find(that.artist_selector)[0];
+            console.log($(that.player_iframe).contents());
         }
         else {
             artist_div = $(that.artist_selector)[0];
@@ -53,6 +54,7 @@ var BaseParser = function() {
     that.artistDivFinder = function(callback) {
         var selector = that.player_iframe || "body";
         $(selector).bind("DOMSubtreeModified", function() {
+            console.log("modified");
             var artist_div = that.getArtistDiv();
             if (artist_div) {
                 $(selector).unbind("DOMSubtreeModified");
@@ -64,7 +66,7 @@ var BaseParser = function() {
 
     that.initListener = function(callback) {
         that.updateArtist(callback);
-        $(that.artist_selector).parent().bind("DOMSubtreeModified",function(){
+        $(that.artist_selector).bind("DOMSubtreeModified",function(){
             that.updateArtist(callback);
         });
     };
@@ -124,6 +126,21 @@ var SpotifyParser = function() {
     var that = BaseParser();
     that.artist_selector = "#track-artist a";
     that.player_iframe = "#app-player";
+    return that;
+};
+
+var SongzaParser = function() {
+    var that = BaseParser();
+    that.artist_selector = ".miniplayer-info-artist-name a";
+
+    that.cleanArtist = function(artist) {
+        if (artist.indexOf("by ") != -1) {
+            return artist.substring(3);
+        }
+
+        return null;
+    };
+
     return that;
 };
 
@@ -222,6 +239,9 @@ var App = function(hostname) {
     else if (hostname == "hypem.com") {
         that.parser = new HypemParser();
     }
+    else if (hostname == "songza.com") {
+        that.parser = new SongzaParser();
+    }
     else if (hostname == "play.spotify.com") {
         that.parser = new SpotifyParser();
     }
@@ -304,8 +324,8 @@ var App = function(hostname) {
     that.tryPublish = function() {
         if (!(that.artist_data && that.event_data && that.related_data && that.geo_event_data)) return;
         var message = {all_events: that.event_data, local_events: that.geo_event_data, artist: that.artist_data, related: that.related_data};
-        console.log(that.event_data);
-        chrome.runtime.sendMessage({active : that.event_data.events});
+        console.log(that.event_data.events.length != 0);
+        chrome.runtime.sendMessage({active : that.event_data.events.length != 0});
         $.publish('retrieved', message);
     };
 
