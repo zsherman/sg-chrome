@@ -42,6 +42,7 @@ $.subscribe('retrieved', function(ev, data) {
 
 // Handle chrome extension button being clicked
 $.subscribe('omnibox', function(ev, data) {
+  console.log("Omnibox");
   if($('.sg-extension').is(":visible")) {
     $(".sg-extension").slideUp('fast', function(){ $(this).hide(); } );
   }
