@@ -24,9 +24,5 @@
       "run_at" : "document_idle"
     }
   ],
-  "web_accessible_resources": ["src/images/logo.png", "template.html"],
-  "browser_action": {
-    "default_icon": "src/images/icon.png",
-    "default_popup": "src/popup.html"
-  }
+  "web_accessible_resources": ["src/images/logo.png", "src/templates/template.html"]
 }

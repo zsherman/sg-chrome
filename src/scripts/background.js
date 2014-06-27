@@ -124,7 +124,7 @@ var App = function() {
     that.eventRetrieved = function(event_data) {
         if (event_data) {
             that.event_data = event_data;
-            $.publish('retrieved', event_data);
+            $.publish('retrieved', {event: that.event_data, artist: that.artist_data});
             console.log(event_data);
         };
     };

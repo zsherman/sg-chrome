@@ -1,0 +1,15 @@
+<div class='sg-extension {{#if visible}}sg-show{{else}}sg-hide{{/if}}'>
+  <header>
+     <div class='logo'></div>
+     <span>{{artist.name}}</span>
+     <div class='settings'><i class='fa fa-gear'></i></div>
+  </header>
+  <div class='performer' style="background-image: url('{{artist.image}}')">
+     <div class='count'>{{event.meta.total}} Shows Found for {{artist.name}}</div>
+  </div>
+  <ul class='events'>
+  {{#each event.events}}
+   <li class='group'><span>{{venue.name}}</span>  <span class="from-price">{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</span><a href='#'>Tickets</a></li>
+  {{/each}}
+  </ul>
+</div>
