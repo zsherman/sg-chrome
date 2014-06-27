@@ -1,5 +1,6 @@
 var template_source;
 var event_data;
+var open = false;
 
 function loadTemplate(data, callback) {
   var req = new XMLHttpRequest();
@@ -25,8 +26,16 @@ function updateTemplate(data) {
   else {
     $('html').append(html);
   }
+
+  if (open === true) {
+    $('.sg-extension').show();
+  }
+
+  // Add logo to extension
   var logo_url = chrome.extension.getURL('src/images/logo.png');
   $('.sg-extension .logo').css('background-image', 'url(' + logo_url + ')');
+  
+  // Replace songkick
   if (data.local_events.length != 0) {
     $('#tour-dates h3 img').attr('src', 'https://chairnerd.global.ssl.fastly.net/images/new/sgs-footer-logo.png').css('height', '30px');
     $('#tour-dates ul').empty();
@@ -55,6 +64,7 @@ $.subscribe('omnibox', function(ev, data) {
   }
   else {
     $(".sg-extension").slideDown('fast', function(){ $(this).show(); } );
+    open = true;
   }
 });
 
@@ -71,6 +81,7 @@ $(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
 
 $(document).on('click', '.sg-extension header a.close', function(e) {
   $(".sg-extension").slideUp('fast', function(){ $(this).hide(); } );
+  open = false;
 });
 
 // Prevent background page from scrolling
