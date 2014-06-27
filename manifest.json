@@ -15,6 +15,7 @@
       ],
       "js": [
         "vendor/jquery-2.1.1.min.js",
+        "vendor/jquery.sticky.js",
         "vendor/handlebars.js",
         "src/scripts/background.js",
         "src/scripts/app.js"

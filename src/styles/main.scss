@@ -62,9 +62,13 @@ html {
 
 // Extension Styles
 
+.sg-extension::-webkit-scrollbar { 
+    display: none; 
+}
+
 .sg-extension {
   height: 500px;
-  width: 365px;
+  width: 335px;
   background: #1A2128;
   position: fixed;
   bottom: 0;
@@ -72,13 +76,17 @@ html {
   border-radius: 3px 3px 0 0;
   font-family: 'Lato', 'Helvetica', 'sans-serif';
   border-left: 1px solid #203A6E;
+  border-right: 1px solid #203A6E;
+  border-top: 1px solid #203A6E;
   z-index: 10000;
+  right: 10px;
+  overflow: scroll;
 
   header {
-    height: 50px;
+    height: 46px;
     display: block;
     background: #0F6ABA;
-    border-radius: 3px 0 0 0;
+    border-radius: 3px 3px 0 0;
     border-top: 1px solid #2A81C8;
     border-bottom: 1px solid #203A6E;
     box-shadow: 0px 0px 0px 1px #203A6E;
@@ -131,24 +139,40 @@ html {
     background-size: cover;
     position: relative;
 
-    .count {
+    nav {
       position: absolute;
       bottom: 0;
       color: #fff;
       font-size: 16px;
-      text-align: left;
       padding-left: 10px;
-      background: rgba(0,0,0,.5);
-      width: 100%;
-      padding: 15px;
       font-weight: 300;
+      background: #191F25;
+      list-style: none;
+      width: 97%;
+
+      li {
+        float: left;
+        font-size: 14px;
+        width: 33.3%;
+        padding: 10px 0px;
+        text-align: center;
+        color: #fff;
+        border-bottom: 3px solid #191F25;
+        cursor: pointer;
+      }
+
+      li.selected {
+        border-bottom: 3px solid #0F6ABA;
+      }
     }
   }
+
 
   ul.events {
     list-style: none;
     padding: 0;
     margin: 0;
+    border-top: 1px solid #000;
 
     li {
       background: #1A2128;
@@ -157,6 +181,7 @@ html {
       padding: 12px 15px;
       font-weight: 300;
       font-size: 14px;
+      cursor: pointer;
 
       span {
         float: left;

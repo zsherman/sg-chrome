@@ -1,11 +1,15 @@
-<div class='sg-extension {{#if visible}}sg-show{{else}}sg-hide{{/if}}'>
+<div class='sg-extension scrollable {{#if visible}}sg-show{{else}}sg-hide{{/if}}'>
   <header>
      <div class='logo'></div>
      <span>{{artist.name}}</span>
      <div class='settings'><i class='fa fa-gear'></i></div>
   </header>
   <div class='performer' style="background-image: url('{{artist.image}}')">
-     <div class='count'>{{event.meta.total}} Shows Found for {{artist.name}}</div>
+     <nav>
+        <li class="selected">Nearby</li>
+        <li>All Events</li>
+        <li>Related</li>
+      </nav>
   </div>
   <ul class='events'>
   {{#each all_events.events}}
