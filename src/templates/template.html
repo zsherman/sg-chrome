@@ -12,7 +12,7 @@
       </nav>
   </div>
   <ul class='events'>
-  {{#each event.events}}
+  {{#each all_events.events}}
    <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
   {{/each}}
   </ul>
