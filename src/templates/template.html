@@ -5,15 +5,31 @@
      <div class='settings'><i class='fa fa-gear'></i></div>
   </header>
   <div class='performer' style="background-image: url('{{artist.image}}')">
-     <nav>
-        <li class="selected">Nearby</li>
-        <li>All Events</li>
-        <li>Related</li>
-      </nav>
-  </div>
-  <ul class='events'>
-  {{#each all_events.events}}
-   <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
-  {{/each}}
+  <ul id="menu">
+    <li class='selected tab'><a href="#nearby">Nearby</a></li>
+    <li class='tab'><a href="#all">Events</a></li>
+    <li class='tab'><a href="#related">Related</a></li>
   </ul>
+  </div>
+    <div class="nearby tab-content" id="nearby">
+      <ul class="events">
+        {{#each all_events.events}}
+         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="all tab-content" id="all">
+      <ul class="events">
+        {{#each all_events.events}}
+         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+        {{/each}}
+      </ul>
+    </div>
+    <div class="related tab-content" id="related">
+      <ul class="events">
+        {{#each all_events.events}}
+         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+        {{/each}}
+      </ul>
+    </div>
 </div>
