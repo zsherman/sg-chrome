@@ -232,9 +232,18 @@ var App = function(hostname) {
 
     that.init = function() {
         // $.subscribe('updated', that.artistSelected.bind(that));
+        that.initButtonListener(that.onButtonClick.bind(that));
         that.parser.artistDivFinder(that.artistUpdated.bind(that));
         that.parser.init(that.artistUpdated.bind(that));
         that.parser.initButtons();
+    };
+
+    that.initButtonListener = function(callback) {
+        chrome.runtime.onMessage.addListener(callback);
+    };
+
+    that.onButtonClick = function(request, sender, sendResponse) {
+        console.log(sender);
     };
 
     that.clear = function() {

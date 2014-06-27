@@ -6,7 +6,8 @@
   "version": "0.1",
   "permissions": [
     "http://api.seatgeek.com/2",
-    "storage"
+    "background",
+    "tabs"
   ],
   "content_scripts": [
     {
@@ -27,8 +28,14 @@
     }
   ],
 
+  "background": {
+    "persistent" : false,
+    "scripts": ["src/scripts/event.js"]
+  },
+
   "browser_action": {
-      "default_icon": "src/images/icon.png"
+      "default_icon": "src/images/icon.png",
+      "default_title": "Open SeatGeek"
   },
   "icons": {
       "48": "src/images/icon.png"
