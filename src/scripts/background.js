@@ -66,7 +66,8 @@ var BaseParser = function() {
 
     that.initListener = function(callback) {
         that.updateArtist(callback);
-        $(that.artist_selector).bind("DOMSubtreeModified",function(){
+        var watcher = that.change_watch_selector ? $(that.change_watch_selector) : $(that.artist_selector).parent();
+        watcher.bind("DOMSubtreeModified",function(){
             that.updateArtist(callback);
         });
     };
@@ -132,6 +133,7 @@ var SpotifyParser = function() {
 var SongzaParser = function() {
     var that = BaseParser();
     that.artist_selector = ".miniplayer-info-artist-name a";
+    that.change_watch_selector = ".player-wrapper";
 
     that.cleanArtist = function(artist) {
         if (artist.indexOf("by ") != -1) {
@@ -262,7 +264,7 @@ var App = function(hostname) {
     };
 
     that.onButtonClick = function(request, sender, sendResponse) {
-        console.log(sender);
+        console.log("button click");
         $.publish('omnibox', {message: 'SG Chrome Button Was Clicked'});
     };
 
@@ -325,7 +327,7 @@ var App = function(hostname) {
         if (!(that.artist_data && that.event_data && that.related_data && that.geo_event_data)) return;
         var message = {all_events: that.event_data, local_events: that.geo_event_data, artist: that.artist_data, related: that.related_data};
         console.log(that.event_data.events.length != 0);
-        chrome.runtime.sendMessage({active : that.event_data.events.length != 0});
+        chrome.runtime.sendMessage({active : that.geo_event_data.events.length != 0});
         $.publish('retrieved', message);
     };
 
