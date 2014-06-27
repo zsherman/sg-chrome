@@ -139,16 +139,15 @@ html {
     background-size: cover;
     position: relative;
 
-    nav {
+    ul {
       position: absolute;
       bottom: 0;
       color: #fff;
       font-size: 16px;
-      padding-left: 10px;
       font-weight: 300;
       background: #191F25;
       list-style: none;
-      width: 97%;
+      width: 100%;
 
       li {
         float: left;
@@ -159,12 +158,22 @@ html {
         color: #fff;
         border-bottom: 3px solid #191F25;
         cursor: pointer;
+
+        a {
+          color: #fff;
+          text-decoration: none;
+          padding: 10px 32px;
+        }
       }
 
       li.selected {
         border-bottom: 3px solid #0F6ABA;
       }
     }
+  }
+
+  .tab-content {
+
   }
 
 

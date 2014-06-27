@@ -133,18 +133,17 @@ html body {
   background-size: cover;
   position: relative;
 }
-.sg-extension .performer nav {
+.sg-extension .performer ul {
   position: absolute;
   bottom: 0;
   color: #fff;
   font-size: 16px;
-  padding-left: 10px;
   font-weight: 300;
   background: #191F25;
   list-style: none;
-  width: 97%;
+  width: 100%;
 }
-.sg-extension .performer nav li {
+.sg-extension .performer ul li {
   float: left;
   font-size: 14px;
   width: 33.3%;
@@ -154,7 +153,12 @@ html body {
   border-bottom: 3px solid #191F25;
   cursor: pointer;
 }
-.sg-extension .performer nav li.selected {
+.sg-extension .performer ul li a {
+  color: #fff;
+  text-decoration: none;
+  padding: 10px 32px;
+}
+.sg-extension .performer ul li.selected {
   border-bottom: 3px solid #0F6ABA;
 }
 .sg-extension ul.events {
