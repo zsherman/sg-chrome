@@ -28,6 +28,7 @@ function updateTemplate(data) {
   $('.sg-extension .logo').css('background-image', 'url(' + logo_url + ')');
 }
 
+// Handle event data from background.js
 $.subscribe('retrieved', function(ev, data) {
   if (!template_source) {
     loadTemplate(data, updateTemplate.bind(this));
@@ -37,24 +38,58 @@ $.subscribe('retrieved', function(ev, data) {
   }
 });
 
-
-// Do all the sticky scrolling
-$( document ).on( 'mousewheel DOMMouseScroll', '.sg-extension', function ( e ) {
-    var e0 = e.originalEvent,
-        delta = e0.wheelDelta || -e0.detail;
-    
-    this.scrollTop += ( delta < 0 ? 1 : -1 ) * 8;
-    e.preventDefault();
+// Handle chrome extension button being clicked
+$.subscribe('omnibox', function(ev, data) {
+  // If the extension is open close it
+  // Otherwise open it and load the template
 });
 
-$('.sg-extension').on('click', 'ul#menu .tab a', function(e) {
+// Handle tabbing
+$(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
+  e.preventDefault();
   var ref = $(this).attr('href');
-  console.log(ref);
   $('.sg-extension .tab-content').hide();
-  $(ref).show();
+  $('' + ref + '').show();
   $('.sg-extension ul#menu .selected').removeClass('selected');
-  $(this).addClass('selected');
+  $(this).closest('li').addClass('selected');
 });
+
+$(document).on('click', '.sg-extension header a.close', function(e) {
+  $(".sg-extension").slideDown('slow', function(){ $(this).remove(); } );
+});
+
+// Prevent background page from scrolling
+$(document).on('DOMMouseScroll mousewheel', '.scrollable', function(ev) {
+    var $this = $(this),
+        scrollTop = this.scrollTop,
+        scrollHeight = this.scrollHeight,
+        height = $this.height(),
+        delta = (ev.type == 'DOMMouseScroll' ?
+            ev.originalEvent.detail * -40 :
+            ev.originalEvent.wheelDelta),
+        up = delta > 0;
+
+    var prevent = function() {
+        ev.stopPropagation();
+        ev.preventDefault();
+        ev.returnValue = false;
+        return false;
+    }
+
+    if (!up && -delta > scrollHeight - height - scrollTop) {
+        // Scrolling down, but this will take us past the bottom.
+        $this.scrollTop(scrollHeight);
+        return prevent();
+    } else if (up && delta > scrollTop) {
+        // Scrolling up, but this will take us past the top.
+        $this.scrollTop(0);
+        return prevent();
+    }
+});
+
+
+
+
 var o = $({});
 
 $.subscribe = function() {
@@ -153,10 +188,9 @@ var BaseParser = function() {
         if (!artist_list) return;
         for (var i = 0; i < artist_list.length; i++) {
             function clean(title) {
-                return title.trim().toLowerCase().replace(/\s/g, '');;
+                return title.trim().toLowerCase().replace(/\s/g, '').replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g,"");
             }
             if (clean(that.current_artist) == clean(artist_list[i].name)) {
-                console.log("Matched");
                 return artist_list[i];
             }
         }
@@ -169,13 +203,6 @@ var HypemParser = function() {
     var that = BaseParser();
     that.artist_selector = "#player-nowplaying a";
     that.listing_div = $(".track_name .artist");
-
-    // that.initButtons = function() {
-    //     $(".section-track").each(function(i, div) {
-    //         var tools = $(div).find(".tools")[0];
-    //         $(tools).prepend("<li class='playdiv' style='width: 26px; height : 26px; margin: 6px; background-color: red;'><a class='icon-toggle'></a></li>");
-    //     });
-    // };
     return that;
 };
 
@@ -228,15 +255,20 @@ var API = function() {
 
     that.getArtistResults = function(artist, callback) {
         var url = that.api_url + "/performers?" + $.param({q : artist});
-        console.log(url);
         $.getJSON(url, function(data) {
-            console.log(data);
             if (data.performers.length != 0) {
                 callback(data.performers);
             }
             else {
                 callback(null);
             }
+        });
+    };
+
+    that.getArtistIdResults = function(artist, callback) {
+        var url = that.api_url + "/performers?" + $.param({q : artist});
+        $.getJSON(url, function(data) {
+            callback(data.performers[0]);
         });
     };
 
@@ -256,7 +288,6 @@ var API = function() {
 
     that.getRelatedResults = function(artist_id, callback) {
         var url = that.api_url + "/recommendations/performers?" + $.param({"performers.id" : artist_id, "client_id" : that.client_id});
-        console.log(url);
         $.getJSON(url, function(data) {
             callback(data);
         }).fail(function(data) {
@@ -292,27 +323,48 @@ var App = function(hostname) {
     }
 
     that.init = function() {
-        if (!that.parser.validPage()) {
-            return;
-        }
+        // $.subscribe('updated', that.artistSelected.bind(that));
+        that.initButtonListener(that.onButtonClick.bind(that));
         that.parser.artistDivFinder(that.artistUpdated.bind(that));
         that.parser.init(that.artistUpdated.bind(that));
         that.parser.initButtons();
     };
 
-    that.artistUpdated = function(artist) {
-        that.artist_data = that.event_data = that.related_data = that.geo_event_data = null;
-        that.api.getArtistResults(artist, that.artistRetrieved.bind(that));
+    that.initButtonListener = function(callback) {
+        chrome.runtime.onMessage.addListener(callback);
     };
 
-    that.artistRetrieved = function(artist_list) {
+    that.onButtonClick = function(request, sender, sendResponse) {
+        console.log(sender);
+        $.publish('omnibox', {message: 'SG Chrome Button Was Clicked'});
+    };
+
+    that.clear = function() {
+        that.artist_data = that.event_data = that.related_data = that.geo_event_data = null;
+    };
+
+    that.artistUpdatedById = function(artist_id) {
+        that.clear();
+        that.api.getArtistIdResults(artist, that.artistRetrieved.bind(that));
+    };
+
+    that.artistUpdated = function(artist) {
+        that.clear();
+        that.api.getArtistResults(artist, that.artistListRetrieved.bind(that));
+    };
+
+    that.artistListRetrieved = function(artist_list) {
         var artist_data = that.parser.selectArtist(artist_list);
         if (artist_data) {
-            that.artist_data = artist_data;
-            that.api.getEventResults(artist_data.id, that.eventRetrieved);
-            that.api.getGeoEventResults(artist_data.id, that.geoEventRetrieved);
-            that.api.getRelatedResults(artist_data.id, that.relatedRetrieved);
+            that.artistRetrieved(artist_data);
         }
+    };
+
+    that.artistRetrieved = function(artist_data) {
+        that.artist_data = artist_data;
+        that.api.getEventResults(artist_data.id, that.eventRetrieved);
+        that.api.getGeoEventResults(artist_data.id, that.geoEventRetrieved);
+        that.api.getRelatedResults(artist_data.id, that.relatedRetrieved);
     };
 
     that.eventRetrieved = function(event_data) {
@@ -340,18 +392,20 @@ var App = function(hostname) {
     }
 
     that.tryPublish = function() {
-        console.log(that.artist_data);
-        console.log(that.event_data);
-        console.log(that.related_data);
-        console.log(that.geo_event_data);
         if (!(that.artist_data && that.event_data && that.related_data && that.geo_event_data)) return;
         var message = {all_events: that.event_data, local_events: that.geo_event_data, artist: that.artist_data, related: that.related_data};
-        console.log(message);
         $.publish('retrieved', message);
     };
 
     return that;
 };
-var app = new App(location.hostname);
-app.init();
 
+var sg_app = new App(location.hostname);
+sg_app.init();
+
+
+console.log("IN EVENT");
+chrome.browserAction.onClicked.addListener(function(tab) {
+    console.log(tab);
+    chrome.tabs.sendMessage(tab.id, "clicked");
+});

@@ -2,7 +2,7 @@
   <header>
      <div class='logo'></div>
      <span>{{artist.name}}</span>
-     <div class='settings'><i class='fa fa-gear'></i></div>
+     <div class='settings'><a class="close">×</a></div>
   </header>
   <div class='performer' style="background-image: url('{{artist.image}}')">
   <ul id="menu">
@@ -13,22 +13,22 @@
   </div>
     <div class="nearby tab-content" id="nearby">
       <ul class="events">
-        {{#each all_events.events}}
-         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+        {{#each local_events.events}}
+         <li class='group'><span>{{venue.name}}</span><a href="{{url}}" target="_blank">Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
         {{/each}}
       </ul>
     </div>
     <div class="all tab-content" id="all">
       <ul class="events">
         {{#each all_events.events}}
-         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+         <li class='group'><span>{{venue.name}}</span><a href="{{url}} target="_blank"">Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
         {{/each}}
       </ul>
     </div>
     <div class="related tab-content" id="related">
       <ul class="events">
-        {{#each all_events.events}}
-         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+        {{#each related.recommendations}}
+         <li class='group'><span>{{performer.name}}</span><a href='#' target="_blank">Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
         {{/each}}
       </ul>
     </div>
