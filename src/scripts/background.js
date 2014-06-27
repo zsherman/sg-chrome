@@ -72,7 +72,6 @@ var BaseParser = function() {
     that.updateArtist = function(callback) {
         var artist = that.getCurrentArtist();
         if (artist && artist != that.current_artist) {
-            console.log(artist);
             that.current_artist = artist;
             callback(that.current_artist);
         }
@@ -266,6 +265,9 @@ var App = function(hostname) {
         if (artist_data) {
             that.artistRetrieved(artist_data);
         }
+        else {
+            chrome.runtime.sendMessage({active : false});
+        }
     };
 
     that.artistRetrieved = function(artist_data) {
@@ -302,6 +304,8 @@ var App = function(hostname) {
     that.tryPublish = function() {
         if (!(that.artist_data && that.event_data && that.related_data && that.geo_event_data)) return;
         var message = {all_events: that.event_data, local_events: that.geo_event_data, artist: that.artist_data, related: that.related_data};
+        console.log(that.event_data);
+        chrome.runtime.sendMessage({active : that.event_data.events});
         $.publish('retrieved', message);
     };
 

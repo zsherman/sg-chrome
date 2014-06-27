@@ -34,12 +34,12 @@
   },
 
   "browser_action": {
-      "default_icon": "src/images/icon.png",
+      "default_icon": "src/images/sg-inactive.png",
       "default_title": "Open SeatGeek"
   },
   "icons": {
       "48": "src/images/icon.png"
   },
 
-  "web_accessible_resources": ["src/images/logo.png", "src/templates/template.html"]
+  "web_accessible_resources": ["src/images/logo.png", "src/images/sg-active.png", "src/images/sg-inactive.png", "src/templates/template.html"]
 }

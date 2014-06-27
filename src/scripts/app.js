@@ -15,7 +15,7 @@ function loadTemplate(data, callback) {
 }
 
 function updateTemplate(data) {
-  data.visible = !!data.events && !!data.artist;
+  data.visible = !!data.all_events && !!data.artist;
   var template = Handlebars.compile(template_source);
   var html = template(data);
   if ($(".sg-extension")[0]) {
@@ -37,6 +37,7 @@ $.subscribe('retrieved', function(ev, data) {
     updateTemplate(data);
   }
 });
+
 
 // Handle chrome extension button being clicked
 $.subscribe('omnibox', function(ev, data) {
@@ -87,6 +88,3 @@ $(document).on('DOMMouseScroll mousewheel', '.scrollable', function(ev) {
         return prevent();
     }
 });
-
-
-
