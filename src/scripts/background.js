@@ -5,6 +5,9 @@ var BaseParser = function() {
     that.track_div =  null;
     that.listing_div =  null;
 
+    that.getCurrentArtist = null;
+    that.initButtons = null;
+
     that.getArtists = function() {
         var artists = [];
         that.listing_div.each(function(i, artist) {
@@ -13,9 +16,6 @@ var BaseParser = function() {
         return artists;
     };
 
-    that.getCurrentArtist = function() {
-        return null;
-    }
 
     that.initListener = function(callback) {
         that.updateArtist(callback);
@@ -47,6 +47,13 @@ var HypemParser = function() {
         if (!artist_div) return null;
 
         return artist_div.text;
+    };
+
+    that.initButtons = function() {
+        $(".section-track").each(function(i, div) {
+            var tools = $(div).find(".tools")[0];
+            $(tools).prepend("<li class='playdiv' style='width: 26px; height : 26px; margin: 6px; background-color: red;'><a class='icon-toggle'></a></li>");
+        });
     };
     return that;
 };
@@ -86,6 +93,7 @@ var App = function() {
 
     that.init = function() {
         that.parser.initListener(that.artistUpdated.bind(that));
+        that.parser.initButtons();
     };
 
     that.artistUpdated = function(artist) {
