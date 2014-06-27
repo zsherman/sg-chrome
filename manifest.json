@@ -26,8 +26,13 @@
       "run_at" : "document_idle"
     }
   ],
+
   "browser_action": {
       "default_icon": "src/images/icon.png"
   },
+  "icons": {
+      "48": "src/images/icon.png"
+  },
+
   "web_accessible_resources": ["src/images/logo.png", "src/templates/template.html"]
 }

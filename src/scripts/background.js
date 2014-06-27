@@ -231,9 +231,6 @@ var App = function(hostname) {
     }
 
     that.init = function() {
-        if (!that.parser.validPage()) {
-            return;
-        }
         // $.subscribe('updated', that.artistSelected.bind(that));
         that.parser.artistDivFinder(that.artistUpdated.bind(that));
         that.parser.init(that.artistUpdated.bind(that));
@@ -295,12 +292,12 @@ var App = function(hostname) {
     that.tryPublish = function() {
         if (!(that.artist_data && that.event_data && that.related_data && that.geo_event_data)) return;
         var message = {all_events: that.event_data, local_events: that.geo_event_data, artist: that.artist_data, related: that.related_data};
-        console.log(message);
         $.publish('retrieved', message);
     };
 
     return that;
 };
-var app = new App(location.hostname);
-app.init();
+
+var sg_app = new App(location.hostname);
+sg_app.init();
 
