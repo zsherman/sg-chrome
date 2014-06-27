@@ -80,7 +80,8 @@ html {
   border-top: 1px solid #203A6E;
   z-index: 10000;
   right: 10px;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
 
   header {
     height: 46px;
@@ -124,11 +125,32 @@ html {
       color: #fff;
       text-align: center;
 
-      i {
+      i, a {
         position: absolute;
         top: 16px;
         right: 12px;
         font-size: 20px;
+      }
+
+      a.close {
+        font-size: 20px;
+        font-weight: bold;
+        line-height: 18px;
+        color: #000000;
+        text-shadow: 0 1px 0 #ffffff;
+        opacity: 0.2;
+        filter: alpha(opacity=20);
+        text-decoration: none;
+        font-size: 30px;
+        top: 13px;
+      }
+
+      a.close:hover {
+        color: #000000;
+        text-decoration: none;
+        opacity: 0.4;
+        filter: alpha(opacity=40);
+        cursor: pointer;
       }
     }
   }

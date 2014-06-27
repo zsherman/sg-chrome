@@ -244,6 +244,7 @@ var App = function(hostname) {
 
     that.onButtonClick = function(request, sender, sendResponse) {
         console.log(sender);
+        $.publish('omnibox', {message: 'SG Chrome Button Was Clicked'});
     };
 
     that.clear = function() {

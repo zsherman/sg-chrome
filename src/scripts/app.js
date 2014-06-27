@@ -28,6 +28,7 @@ function updateTemplate(data) {
   $('.sg-extension .logo').css('background-image', 'url(' + logo_url + ')');
 }
 
+// Handle event data from background.js
 $.subscribe('retrieved', function(ev, data) {
   if (!template_source) {
     loadTemplate(data, updateTemplate.bind(this));
@@ -37,16 +38,13 @@ $.subscribe('retrieved', function(ev, data) {
   }
 });
 
-
-// Do all the sticky scrolling
-$( document ).on( 'mousewheel DOMMouseScroll', '.sg-extension', function ( e ) {
-    var e0 = e.originalEvent,
-        delta = e0.wheelDelta || -e0.detail;
-    
-    this.scrollTop += ( delta < 0 ? 1 : -1 ) * 8;
-    e.preventDefault();
+// Handle chrome extension button being clicked
+$.subscribe('omnibox', function(ev, data) {
+  // If the extension is open close it
+  // Otherwise open it and load the template
 });
 
+// Handle tabbing
 $(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
   e.preventDefault();
   var ref = $(this).attr('href');
@@ -55,3 +53,39 @@ $(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
   $('.sg-extension ul#menu .selected').removeClass('selected');
   $(this).closest('li').addClass('selected');
 });
+
+$(document).on('click', '.sg-extension header a.close', function(e) {
+  $(".sg-extension").slideDown('slow', function(){ $(this).remove(); } );
+});
+
+// Prevent background page from scrolling
+$(document).on('DOMMouseScroll mousewheel', '.scrollable', function(ev) {
+    var $this = $(this),
+        scrollTop = this.scrollTop,
+        scrollHeight = this.scrollHeight,
+        height = $this.height(),
+        delta = (ev.type == 'DOMMouseScroll' ?
+            ev.originalEvent.detail * -40 :
+            ev.originalEvent.wheelDelta),
+        up = delta > 0;
+
+    var prevent = function() {
+        ev.stopPropagation();
+        ev.preventDefault();
+        ev.returnValue = false;
+        return false;
+    }
+
+    if (!up && -delta > scrollHeight - height - scrollTop) {
+        // Scrolling down, but this will take us past the bottom.
+        $this.scrollTop(scrollHeight);
+        return prevent();
+    } else if (up && delta > scrollTop) {
+        // Scrolling up, but this will take us past the top.
+        $this.scrollTop(0);
+        return prevent();
+    }
+});
+
+
+
