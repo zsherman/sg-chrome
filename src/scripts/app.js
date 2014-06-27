@@ -15,8 +15,25 @@ function loadTemplate(data, callback) {
   console.log(data);
 }
 
+function formatData(data) {
+  var events = data.events;
+  var m_names = new Array("January", "February", "March",
+  "April", "May", "June", "July", "August", "September",
+  "October", "November", "December");
+
+  for (var i = 0; i < events.length; i++) {
+    var ev = events[i];
+    var date = new Date(ev.datetime_local);
+    ev.formatted_date = m_names[date.getMonth()] + " " + date.getDate();
+    console.log(ev.formatted_date);
+  }
+}
+
 function updateTemplate(data) {
   data.visible = !!data.all_events && !!data.artist;
+  console.log(data);
+  formatData(data.all_events);
+  formatData(data.local_events);
   var template = Handlebars.compile(template_source);
   var html = template(data);
   if ($(".sg-extension")[0]) {
