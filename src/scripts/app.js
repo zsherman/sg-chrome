@@ -50,10 +50,8 @@ $( document ).on( 'mousewheel DOMMouseScroll', '.sg-extension', function ( e ) {
 $(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
   e.preventDefault();
   var ref = $(this).attr('href');
-  console.log(ref);
   $('.sg-extension .tab-content').hide();
   $('' + ref + '').show();
-  console.log(('' + ref + ''));
   $('.sg-extension ul#menu .selected').removeClass('selected');
   $(this).closest('li').addClass('selected');
 });

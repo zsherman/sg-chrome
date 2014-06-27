@@ -7,7 +7,7 @@
   <div class='performer' style="background-image: url('{{artist.image}}')">
   <ul id="menu">
     <li class='selected tab'><a href="#nearby">Nearby</a></li>
-    <li class='tab'><a href="#all">All Events</a></li>
+    <li class='tab'><a href="#all">Events</a></li>
     <li class='tab'><a href="#related">Related</a></li>
   </ul>
   </div>
@@ -20,12 +20,16 @@
     </div>
     <div class="all tab-content" id="all">
       <ul class="events">
-        <li class='group'><span>Hammerstein</span><a href='#'>All events</a></li>
+        {{#each all_events.events}}
+         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+        {{/each}}
       </ul>
     </div>
     <div class="related tab-content" id="related">
       <ul class="events">
-        <li class='group'><span>Hammerstein</span><a href='#'>Related</a></li>
+        {{#each all_events.events}}
+         <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
+        {{/each}}
       </ul>
     </div>
 </div>
