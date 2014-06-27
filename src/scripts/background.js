@@ -81,15 +81,28 @@ var BaseParser = function() {
     that.getCurrentArtist = function() {
         var artist_div = that.getArtistDiv();
         if (!artist_div) return null;
-        return that.clean_artist(artist_div.text || artist_div.innerHTML);
+        return that.cleanArtist(artist_div.text || artist_div.innerHTML);
     };
 
-    that.clean_artist = function(artist) {
+    that.cleanArtist = function(artist) {
         return artist;
     };
 
-    that.valid_page = function() {
+    that.validPage = function() {
         return true;
+    };
+
+    that.selectArtist = function(artist_list) {
+        if (!artist_list) return;
+        for (var i = 0; i < artist_list.length; i++) {
+            function clean(title) {
+                return title.trim().toLowerCase().replace(/\s/g, '');;
+            }
+            if (clean(that.current_artist) == clean(artist_list[i].name)) {
+                console.log("Matched");
+                return artist_list[i];
+            }
+        }
     };
 
     return that;
@@ -133,7 +146,7 @@ var YoutubeParser = function() {
         }, 500);
     };
 
-    that.valid_page = function() {
+    that.validPage = function() {
         var category = $("#eow-category a")[0].text;
         if (category == "Music") {
             return true;
@@ -141,7 +154,7 @@ var YoutubeParser = function() {
         return false;
     };
 
-    that.clean_artist = function(artist) {
+    that.cleanArtist = function(artist) {
         if (artist.indexOf("-") != -1) {
             return artist.split("-")[0].trim();
         }
@@ -162,7 +175,7 @@ var API = function() {
         $.getJSON(url, function(data) {
             console.log(data);
             if (data.performers.length != 0) {
-                callback(data.performers[0]);
+                callback(data.performers);
             }
             else {
                 callback(null);
@@ -222,7 +235,7 @@ var App = function(hostname) {
     }
 
     that.init = function() {
-        if (!that.parser.valid_page()) {
+        if (!that.parser.validPage()) {
             return;
         }
         that.parser.artistDivFinder(that.artistUpdated.bind(that));
@@ -235,7 +248,8 @@ var App = function(hostname) {
         that.api.getArtistResults(artist, that.artistRetrieved.bind(that));
     };
 
-    that.artistRetrieved = function(artist_data) {
+    that.artistRetrieved = function(artist_list) {
+        var artist_data = that.parser.selectArtist(artist_list);
         if (artist_data) {
             that.artist_data = artist_data;
             that.api.getEventResults(artist_data.id, that.eventRetrieved);
