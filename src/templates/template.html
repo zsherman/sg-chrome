@@ -11,21 +11,21 @@
     <li class='tab'><a href="#related">Related</a></li>
   </ul>
   </div>
-    <div class="nearby tab-content" id="nearby">
+    <div class="nearby tab-content" id="nearby" style="display: block;">
       <ul class="events">
         {{#each local_events.events}}
          <li class='group'><span>{{venue.name}}</span><a href="{{url}}" target="_blank">Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
         {{/each}}
       </ul>
     </div>
-    <div class="all tab-content" id="all">
+    <div class="all tab-content" id="all" style="display: none;">
       <ul class="events">
         {{#each all_events.events}}
          <li class='group'><span>{{venue.name}}</span><a href="{{url}} target="_blank"">Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
         {{/each}}
       </ul>
     </div>
-    <div class="related tab-content" id="related">
+    <div class="related tab-content" id="related" style="display: none;">
       <ul class="events">
         {{#each related.recommendations}}
          <li class='group'><span>{{performer.name}}</span><a href='#' target="_blank">Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>

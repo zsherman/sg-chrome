@@ -49,13 +49,14 @@ $(document).on('click', '.sg-extension ul#menu .tab a', function(e) {
   e.preventDefault();
   var ref = $(this).attr('href');
   $('.sg-extension .tab-content').hide();
+  $('' + ref + '').css('display', 'block');
   $('' + ref + '').show();
   $('.sg-extension ul#menu .selected').removeClass('selected');
   $(this).closest('li').addClass('selected');
 });
 
 $(document).on('click', '.sg-extension header a.close', function(e) {
-  $(".sg-extension").slideDown('slow', function(){ $(this).remove(); } );
+  $(".sg-extension").slideUp('fast', function(){ $(this).remove(); } );
 });
 
 // Prevent background page from scrolling
