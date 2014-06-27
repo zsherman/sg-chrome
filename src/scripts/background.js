@@ -1,3 +1,17 @@
+var o = $({});
+
+$.subscribe = function() {
+    o.on.apply(o, arguments);
+};
+
+$.unsubscribe = function() {
+    o.off.apply(o, arguments);
+};
+
+$.publish = function() {
+    o.trigger.apply(o, arguments);
+};
+
 var BaseParser = function() {
     var that = {};
     that.current_artist = null;
@@ -102,6 +116,7 @@ var App = function() {
     that.eventRetrieved = function(event_data) {
         if (event_data) {
             that.event_data = event_data;
+            $.publish('retrieved', event_data);
             console.log(event_data);
         };
     };

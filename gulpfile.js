@@ -15,8 +15,9 @@ var gulp = require('gulp'),
     bower = require('gulp-bower'),
     include = require('gulp-include'),
     gulpFilter = require('gulp-filter'),
-    gulpBrowserify = require('gulp-browserify'),
+    plumber = require('gulp-plumber'),
     react = require('gulp-react'),
+    flatten = require('gulp-flatten'),
     connect = require('gulp-connect'),
     lr = require('tiny-lr'),
     server = lr();
@@ -42,7 +43,7 @@ gulp.task('scripts', function() {
     .pipe(concat('main.js'))
     .pipe(gulp.dest('dist/scripts'))
     .pipe(rename({ suffix: '.min' }))
-    .pipe(uglify())
+    // .pipe(uglify())
     // .pipe(livereload(server))
     .pipe(gulp.dest('dist/scripts'))
     .pipe(notify({ message: 'Scripts task complete' }));
@@ -50,10 +51,15 @@ gulp.task('scripts', function() {
 
 // React
 gulp.task('react', function() {
-  return gulp.src('/src/scripts/jsx/*.jsx')
-    .pipe(gp.react().on('error', error))
-    .pipe(gulp.dest('/src/scripts/'));
-});
+  return gulp.src('/src/jsx/**/*.jsx')
+    .pipe(react())
+    .on('error', function(e) {
+      console.error(e.message + '\n  in ' + e.fileName)
+    })
+    .pipe(concat('components.js'))
+    .pipe(gulp.dest('dist/scripts/'))
+    .pipe(notify({ message: 'React task complete' }));
+})
  
 // Images
 gulp.task('images', function() {
@@ -72,7 +78,7 @@ gulp.task('clean', function() {
  
 // Default task
 gulp.task('default', ['clean'], function() {
-    gulp.run('styles', 'scripts', 'images');
+    gulp.run('styles', 'scripts', 'images', 'react');
 });
 
 // Simple server
@@ -93,6 +99,12 @@ gulp.task('watch', function() {
     gulp.watch('src/styles/**/*.scss', function(event) {
       console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
       gulp.run('styles');
+    });
+
+    // Watch .jsx files
+    gulp.watch('src/scripts/**/*.jsx', function(event) {
+      console.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
+      gulp.run('react');
     });
  
     // Watch .js files

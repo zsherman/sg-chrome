@@ -13,12 +13,18 @@
         "http://hypem.com/*"
       ],
       "js": [
-        "src/scripts/jquery-2.1.1.min.js",
-        "src/scripts/background.js"
+        "vendor/jquery-2.1.1.min.js",
+        "vendor/handlebars.js",
+        "src/scripts/background.js",
+        "src/scripts/app.js"
+      ],
+      "css": [
+        "dist/styles/main.css"
       ],
       "run_at" : "document_idle"
     }
   ],
+  "web_accessible_resources": ["template.html"],
   "browser_action": {
     "default_icon": "src/images/icon.png",
     "default_popup": "src/popup.html"
