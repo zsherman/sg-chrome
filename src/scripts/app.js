@@ -27,6 +27,13 @@ function updateTemplate(data) {
   }
   var logo_url = chrome.extension.getURL('src/images/logo.png');
   $('.sg-extension .logo').css('background-image', 'url(' + logo_url + ')');
+  if (data.local_events.length != 0) {
+    $('#tour-dates h3 img').attr('src', 'https://chairnerd.global.ssl.fastly.net/images/new/sgs-footer-logo.png').css('height', '30px');
+    $('#tour-dates ul').empty();
+    for(var item in data.local_events.events) {
+      $('#tour-dates ul').append('<li><a href="' + data.local_events.events[item]['url'] + '"' + '>' + data.local_events.events[item]['title'] + '</a></li>');
+    };
+  };
 }
 
 // Handle event data from background.js
