@@ -18,9 +18,18 @@ var BaseParser = function() {
     that.artist_div =  null;
     that.track_div =  null;
     that.listing_div =  null;
+    that.artist_selector = null;
 
     that.getCurrentArtist = null;
     that.initButtons = null;
+
+    that.init = function() {
+        return true;
+    };
+
+    that.initButtons = function() {
+        return true;
+    }
 
     that.getArtists = function() {
         var artists = [];
@@ -30,22 +39,58 @@ var BaseParser = function() {
         return artists;
     };
 
+    that.getArtistDiv = function() {
+        var artist_div;
+        if (that.player_iframe) {
+            artist_div = $(that.player_iframe).contents().find(that.artist_selector)[0];
+        }
+        else {
+            artist_div = $(that.artist_selector)[0];
+        }
+        return artist_div;
+    }
+
+    that.artistDivFinder = function(callback) {
+        var selector = that.player_iframe || "body";
+        $(selector).bind("DOMSubtreeModified", function() {
+            var artist_div = that.getArtistDiv();
+            if (artist_div) {
+                $(selector).unbind("DOMSubtreeModified");
+                that.initListener(callback);
+            }
+        });
+    };
+
 
     that.initListener = function(callback) {
         that.updateArtist(callback);
-        console.log(that.track_div);
-        that.track_div.bind("DOMSubtreeModified",function(){
+        $(that.artist_selector).parent().bind("DOMSubtreeModified",function(){
             that.updateArtist(callback);
         });
     };
 
     that.updateArtist = function(callback) {
         var artist = that.getCurrentArtist();
-        console.log
+        console.log(artist);
         if (artist && artist != that.current_artist) {
             that.current_artist = artist;
             callback(that.current_artist);
         }
+    };
+
+    that.getCurrentArtist = function() {
+        var artist_div = that.getArtistDiv();
+        console.log(artist_div);
+        if (!artist_div) return null;
+        return that.clean_artist(artist_div.text || artist_div.innerHTML);
+    };
+
+    that.clean_artist = function(artist) {
+        return artist;
+    };
+
+    that.valid_page = function() {
+        return true;
     };
 
     return that;
@@ -53,15 +98,8 @@ var BaseParser = function() {
 
 var HypemParser = function() {
     var that = BaseParser();
-    that.track_div = $('#player-nowplaying');
+    that.artist_selector = "#player-nowplaying a";
     that.listing_div = $(".track_name .artist");
-
-    that.getCurrentArtist = function() {
-        var artist_div = $("#player-nowplaying a")[0];
-        if (!artist_div) return null;
-
-        return artist_div.text;
-    };
 
     that.initButtons = function() {
         $(".section-track").each(function(i, div) {
@@ -72,13 +110,57 @@ var HypemParser = function() {
     return that;
 };
 
+var RdioParser = function() {
+    var that = BaseParser();
+    that.artist_selector = ".text_metadata .artist_title";
+    return that;
+};
+
+// DOES NOT WORK YET, STUPID IFRAME
+var SpotifyParser = function() {
+    var that = BaseParser();
+    that.artist_selector = "#track-artist a";
+    that.player_iframe = "#app-player";
+    return that;
+};
+
+var YoutubeParser = function() {
+    var that = BaseParser();
+    that.artist_selector = "#eow-title";
+
+    that.init = function(callback) {
+        setInterval(function() {
+            that.updateArtist(callback);
+        }, 500);
+    };
+
+    that.valid_page = function() {
+        var category = $("#eow-category a")[0].text;
+        if (category == "Music") {
+            return true;
+        }
+        return false;
+    };
+
+    that.clean_artist = function(artist) {
+        if (artist.indexOf("-") != -1) {
+            return artist.split("-")[0].trim();
+        }
+
+        return null;
+    };
+    return that;
+};
+
 var API = function() {
     var that = {};
     that.api_url = "http://api.seatgeek.com/2";
 
     that.getArtistResults = function(artist, callback) {
         var url = that.api_url + "/performers?" + $.param({q : artist});
+        console.log(url);
         $.getJSON(url, function(data) {
+            console.log(data);
             if (data.performers.length != 0) {
                 callback(data.performers[0]);
             }
@@ -98,19 +180,37 @@ var API = function() {
     return that;
 };
 
-var App = function() {
+var App = function(hostname) {
     var that = {};
-    that.parser = new HypemParser();
+    that.hostname = hostname;
     that.api = new API();
     that.artist_data;
     that.event_data;
 
+    if (hostname == "www.rdio.com") {
+        that.parser = new RdioParser();
+    }
+    else if (hostname == "hypem.com") {
+        that.parser = new HypemParser();
+    }
+    else if (hostname == "play.spotify.com") {
+        that.parser = new SpotifyParser();
+    }
+    else if (hostname == "www.youtube.com") {
+        that.parser = new YoutubeParser();
+    }
+
     that.init = function() {
-        that.parser.initListener(that.artistUpdated.bind(that));
+        if (!that.parser.valid_page()) {
+            return;
+        }
+        that.parser.artistDivFinder(that.artistUpdated.bind(that));
+        that.parser.init(that.artistUpdated.bind(that));
         that.parser.initButtons();
     };
 
     that.artistUpdated = function(artist) {
+        console.log("In app artist updated ", artist);
         that.api.getArtistResults(artist, that.artistRetrieved.bind(that));
     };
 
@@ -131,7 +231,6 @@ var App = function() {
 
     return that;
 };
-
-var app = new App();
+var app = new App(location.hostname);
 app.init();
 

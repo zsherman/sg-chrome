@@ -9,7 +9,7 @@
   </div>
   <ul class='events'>
   {{#each event.events}}
-   <li class='group'><span>{{venue.name}}</span>  <span class="from-price">{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</span><a href='#'>Tickets</a></li>
+   <li class='group'><span>{{venue.name}}</span><a href='#'>Tickets{{#if stats.lowest_price}} from ${{stats.lowest_price}}{{/if}}</a></li>
   {{/each}}
   </ul>
 </div>

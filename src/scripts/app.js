@@ -7,6 +7,7 @@ function loadTemplate(data, callback) {
   req.onreadystatechange = function() {
       if (req.readyState == 4 && req.status == 200) {
           template_source = req.responseText;
+          callback(data);
       }
   };
   req.send(null);
@@ -26,7 +27,7 @@ function updateTemplate(data) {
 
 $.subscribe('retrieved', function(ev, data) {
   if (!template_source) {
-    loadTemplate(data, updateTemplate);
+    loadTemplate(data, updateTemplate.bind(this));
   }
   else {
     updateTemplate(data);
